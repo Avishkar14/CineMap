@@ -10,9 +10,11 @@ Instead of traditional recommendation lists, CineMap enables users to explore co
 
 # 🚀 Project Overview
 
-Traditional recommendation systems display movies as simple lists. CineMap aims to improve content discovery by representing movies as nodes and their relationships as edges in an interactive graph.
+CineMap is an interactive movie exploration platform where users discover movies through a dynamic graph instead of endless recommendation lists.
 
-The project combines graph visualization with recommendation algorithms to help users discover related movies based on multiple similarity factors rather than a single recommendation score.
+A movie search acts as the entry point. After selecting a movie, CineMap builds an interactive similarity graph, allowing users to visually navigate to related movies based on a custom recommendation algorithm.
+
+The project combines React, Spring Boot, TMDB, and graph visualization to create a modern movie discovery experience inspired by MALMap.
 
 ---
 
@@ -21,18 +23,23 @@ The project combines graph visualization with recommendation algorithms to help 
 ## ✅ Current Features
 
 - React + Spring Boot full-stack architecture
-- Frontend ↔ Backend communication
-- Health Check REST API
-- Project documentation
+- Frontend ↔ Backend REST communication
+- Health Check API
+- TMDB API integration
+- Movie Search
+- Responsive Movie Card UI
+- Loading & Error Handling
+- Project Documentation
 
 ## 🚧 Planned Core Features
 
-- Movie Search
-- Movie Details
-- Interactive Graph Visualization
+- Movie Details Sidebar
+- Interactive Recommendation Graph
+- Graph Navigation
 - Similarity-based Recommendations
-- Zoom & Pan Graph
+- Zoom & Pan
 - Movie Relationship Explorer
+- Graph Clustering
 
 ## 🔮 Future Features
 
@@ -49,25 +56,30 @@ The project combines graph visualization with recommendation algorithms to help 
 
 # 🧠 Recommendation Strategy (Planned)
 
-Movie relationships will be generated using a weighted similarity score based on multiple attributes such as:
+Movie similarity will not rely solely on TMDB recommendations.
+
+Instead, CineMap will calculate a weighted similarity score using multiple movie attributes.
+
+Possible factors include:
 
 - Genres
-- Cast
-- Directors
-- Writers
-- Production Studios
 - Keywords
-- Ratings
-- Release Year
+- Directors
+- Cast
+- Runtime
+- Rating
 - Popularity
-- User Interaction (Future)
+- Release Year
+- Production Companies
 
-These relationships will be visualized as an interactive graph where:
+These scores will determine:
 
-- 🎬 Nodes represent movies or TV series.
-- 🔗 Edges represent similarity scores.
-- 📍 Distance between nodes indicates how closely related they are.
+- Graph edges
+- Node distance
+- Cluster formation
+- Recommendation ranking
 
+This architecture allows TMDB to be used primarily as a data source while CineMap generates its own recommendation graph.
 ---
 
 # 🛠️ Tech Stack
@@ -77,14 +89,15 @@ These relationships will be visualized as an interactive graph where:
 - React
 - TypeScript
 - Vite
-- Tailwind CSS *(Planned)*
-- Cytoscape.js *(Planned)*
+- CSS
+- Cytoscape.js (Planned)
 
 ## Backend
 
 - Spring Boot
 - Java
 - Maven
+- RestTemplate
 
 ## External APIs
 
@@ -127,19 +140,22 @@ CineMap
 
 # 🚧 Current Progress
 
-- ✅ GitHub repository initialized
-- ✅ React + Vite frontend setup
-- ✅ Spring Boot backend setup
+- ✅ Repository initialized
+- ✅ React + Vite setup
+- ✅ Spring Boot setup
 - ✅ Maven configuration
-- ✅ REST API created
-- ✅ Frontend connected with backend
-- ✅ Health Check endpoint implemented
+- ✅ Health Check API
+- ✅ Frontend ↔ Backend communication
+- ✅ TMDB API integration
+- ✅ Movie Search
+- ✅ Responsive Movie Cards
+- ✅ Loading & Error Handling
 
 ### Currently Working On
 
-- TMDB API Integration
-- Movie Search
-- Search Results UI
+- Movie Details API
+- Recommendation Engine foundation
+- Graph Data Model
 
 ---
 
@@ -147,49 +163,53 @@ CineMap
 
 ## ✅ Phase 1 — Foundation
 
-- [x] Create GitHub repository
-- [x] Setup React (Vite + TypeScript)
-- [x] Setup Spring Boot Backend
-- [x] Configure Maven
-- [x] Frontend ↔ Backend Communication
+- [x] GitHub repository
+- [x] React setup
+- [x] Spring Boot setup
+- [x] Maven configuration
+- [x] Frontend ↔ Backend communication
 - [x] Health Check API
-- [ ] TMDB API Integration
-- [ ] Movie Search
-- [ ] Movie Details
-- [ ] Search Suggestions
+- [x] TMDB Integration
+- [x] Movie Search
+- [x] Responsive Movie Cards
+- [ ] Movie Details Sidebar
 
 ---
 
 ## 🚀 Phase 2 — Graph Visualization
 
+- [ ] Recommendation Service
+- [ ] Similarity Score Calculation
+- [ ] Graph JSON Generator
+- [ ] Cytoscape Integration
 - [ ] Interactive Movie Graph
 - [ ] Zoom & Pan
-- [ ] Movie Connections
-- [ ] Similarity Algorithm
-- [ ] Graph Filters
-- [ ] Improved UI
+- [ ] Graph Clustering
+- [ ] Sidebar Integration
 
 ---
 
 ## ⭐ Phase 3 — Recommendation Engine
 
-- [ ] Advanced Recommendation Engine
-- [ ] Neo4j Integration
-- [ ] User Authentication
-- [ ] Watchlists
+- [ ] Custom Recommendation Algorithm
+- [ ] Recommendation Weights
+- [ ] Recommendation Explanation
+- [ ] Graph Filters
+- [ ] Neo4j Research
+- [ ] Authentication
 - [ ] Favorites
-- [ ] Personalized Recommendations
+- [ ] Watchlists
 
 ---
 
 # 🎯 Project Goals
 
-- Learn Full Stack Development using React and Spring Boot.
-- Build an interactive recommendation system.
-- Learn REST APIs and API integration.
+- Build a graph-based movie recommendation platform.
+- Learn full-stack development with React and Spring Boot.
+- Design custom recommendation algorithms.
 - Explore graph visualization techniques.
-- Implement recommendation algorithms.
-- Gain experience with graph databases like Neo4j.
+- Learn scalable backend architecture.
+- Gain experience with graph databases and recommendation systems.
 
 ---
 
@@ -251,10 +271,9 @@ Coming Soon...
 
 # 💡 Inspiration
 
-The project is inspired by **MALMap**, which visualizes anime relationships.
+The project is inspired by MALMap, which visualizes relationships between anime using an interactive graph.
 
-CineMap extends the concept to movies and TV series while introducing a custom recommendation engine, modern frontend architecture, and future graph database integration.
-
+CineMap adapts this idea for movies and TV series while introducing a custom similarity engine, modern React frontend, Spring Boot backend, and an extensible architecture capable of supporting advanced recommendation algorithms in the future.
 ---
 
 # 📄 License
