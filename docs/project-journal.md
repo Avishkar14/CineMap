@@ -171,81 +171,76 @@ Frontend
 
 ✅ Issue #2 Complete
 
-Project Direction Update
+## Project Direction Update
 
-After completing movie search, the project vision was refined.
+The project direction evolved after completing movie search.
 
-Initially, the focus was on building a movie search application using TMDB.
+Rather than becoming another movie database like TMDB or IMDb, CineMap aims to provide an interactive movie discovery experience through graph visualization.
 
-However, the primary objective of CineMap is not to become another movie database like TMDB or IMDb.
+Movie search serves only as the entry point into the graph.
 
-The search feature exists only as an entry point into the graph.
+The long-term objective is to calculate similarity scores between movies using multiple attributes instead of relying on TMDB recommendations.
 
-The long-term goal is to build an interactive graph visualization where movies are represented as nodes connected by similarity.
+Potential similarity factors include:
 
-Unlike TMDB's "Related Movies", CineMap will eventually calculate its own similarity scores using multiple movie attributes.
+- Genre
+- Keywords
+- Director
+- Cast
+- Runtime
+- Rating
+- Release Year
+- Popularity
 
-Possible similarity factors include:
+These weighted similarities will determine graph connections and distances.
 
-Genre
-Keywords
-Director
-Cast
-Runtime
-Rating
-Release Year
-Popularity
+Users will be able to:
 
-These weighted scores will determine graph edges and node distances.
+- Explore connected movies visually.
+- Discover recommendations naturally.
+- Zoom and pan across movie clusters.
+- Expand recommendations by selecting any movie.
+- View detailed movie information inside a sidebar without leaving the graph.
 
-The graph should allow users to:
+---
 
-Explore connected movies visually
-Discover recommendations naturally
-Zoom and pan across clusters
-Click any movie to expand nearby recommendations
-View detailed information inside a sidebar without leaving the graph
+## Next Goals
 
-The inspiration comes from interactive graph explorers rather than traditional movie websites.
+### Phase 3 — Graph Foundation
 
-Next Goal
-Next Development Roadmap
-Phase 3 — Graph Foundation
-Issue #3
+#### Issue #3 — Movie Details API
 
-Movie Details API
+Create endpoint:
 
-Create endpoint
-
+```text
 GET /api/movie/{id}
+```
 
 Return:
 
-title
-poster
-overview
-genres
-runtime
-release date
-rating
+- Title
+- Poster
+- Overview
+- Genres
+- Runtime
+- Release Date
+- Rating
 
 Purpose:
 
-Provide detailed information when a movie node is selected.
+Provide detailed movie information when a graph node is selected.
 
-Issue #4
+---
 
-Movie Details Sidebar
+#### Issue #4 — Movie Details Sidebar
 
-Instead of opening another page,
+Display movie information inside a sidebar instead of navigating to another page.
 
-display movie information inside a sidebar.
+The graph should remain visible while the sidebar updates dynamically.
 
-The graph should remain visible while the selected movie information updates.
+---
 
-Issue #5
-
-Integrate Cytoscape.js
+#### Issue #5 — Integrate Cytoscape.js
 
 Create the first interactive graph.
 
@@ -253,18 +248,20 @@ Initially display a single movie node.
 
 Learn:
 
-Nodes
-Edges
-Layouts
-Zoom
-Pan
-Click Events
-Issue #6
+- Nodes
+- Edges
+- Layouts
+- Zoom
+- Pan
+- Click Events
 
-Generate Graph from Recommendations
+---
+
+#### Issue #6 — Generate Graph from Recommendations
 
 Use TMDB recommendations temporarily.
 
+```
 Selected Movie
         ↓
 TMDB Recommendations
@@ -272,73 +269,65 @@ TMDB Recommendations
 Graph Nodes
         ↓
 Graph Edges
+```
 
-This provides the first working visualization.
+This provides the first working graph visualization.
 
-Phase 4 — CineMap Recommendation Engine
-Issue #7
+---
 
-Design Similarity Algorithm
+### Phase 4 — CineMap Recommendation Engine
+
+#### Issue #7 — Design Similarity Algorithm
 
 Research and define weighted similarity using:
 
-Genres
-Keywords
-Directors
-Cast
-Runtime
-Rating
-Popularity
-Release Year
-Issue #8
+- Genres
+- Keywords
+- Directors
+- Cast
+- Runtime
+- Rating
+- Popularity
+- Release Year
 
-Build Recommendation Engine
+---
+
+#### Issue #8 — Build Recommendation Engine
 
 Replace TMDB recommendations with CineMap-generated similarity scores.
 
-Each movie will receive a similarity percentage relative to the selected movie.
-
 Example:
 
+```text
 Batman
+   ↓
+Joker        92%
+   ↓
+Se7en        88%
+   ↓
+Prisoners    86%
+   ↓
+Zodiac       84%
+```
 
-↓
+---
 
-Joker
-92%
-
-↓
-
-Se7en
-88%
-
-↓
-
-Prisoners
-86%
-
-↓
-
-Zodiac
-84%
-Issue #9
-
-Graph Clustering
+#### Issue #9 — Graph Clustering
 
 Automatically cluster movies based on similarity.
 
-The interface should resemble an interactive knowledge graph where nearby movies are more closely related than distant ones.
+Nearby movies should appear more closely related than distant ones.
 
-Issue #10
+---
 
-Interactive Graph Exploration
+#### Issue #10 — Interactive Graph Exploration
 
 Allow users to:
 
-Click any node
-Smoothly center the graph
-Highlight neighboring movies
-Expand recommendations
-Update sidebar information dynamically
+- Click any node.
+- Smoothly center the graph.
+- Highlight neighboring movies.
+- Expand recommendations.
+- Update sidebar information dynamically.
 
 No page reloads should occur.
