@@ -1,6 +1,7 @@
 package com.cinemap.backend.service;
 
 import com.cinemap.backend.dto.MovieDetailsDTO;
+import com.cinemap.backend.dto.RecommendationResponseDTO;
 import com.cinemap.backend.dto.SearchResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,12 @@ public class TMDBService {
 //        System.out.println(response.getResults().get(0).getTitle());
         return response;
     }
-    public MovieDetailsDTO getMovieDetails(int movieId){
+    public MovieDetailsDTO getMovie(int movieId){
         String url = baseUrl + "/movie/" + movieId+"?api_key="+apiKey;
         return restTemplate.getForObject(url,MovieDetailsDTO.class);
+    }
+    public RecommendationResponseDTO getRecommendations(int movieId){
+        String url = baseUrl + "/movie/" + movieId + "/recommendations?api_key=" + apiKey;
+        return restTemplate.getForObject( url, RecommendationResponseDTO.class );
     }
 }
