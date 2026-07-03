@@ -36,113 +36,229 @@ Current features:
 
 ---
 
-## Planned Graph Architecture
+# CineMap Architecture
+
+## High-Level Architecture
 
 ```
-                React Frontend
-                      │
-                      ▼
-             Spring Boot REST API
-                      │
-          ┌───────────┴───────────┐
-          ▼                       ▼
-      TMDB API          Similarity Engine
-          │                       │
-          └───────────┬───────────┘
-                      ▼
-          Graph Data Generator
-                      │
-                      ▼
-            Cytoscape.js Graph
-                      │
-        ┌─────────────┴─────────────┐
-        ▼                           ▼
-  Movie Sidebar            Graph Navigation
+                    React Frontend
+                          │
+                          ▼
+                  Spring Boot REST API
+                          │
+                          ▼
+                  Local Graph Dataset
+                          │
+          ┌───────────────┼────────────────┐
+          ▼               ▼                ▼
+      Movie Metadata   Graph Data     Layout Data
+       (movies.json)   (edges.json)   (positions.json)
+                          ▲
+                          │
+                Offline Graph Pipeline
+                          │
+      ┌───────────────────┼────────────────────┐
+      ▼                   ▼                    ▼
+ TMDB Metadata     Similarity Engine     Community Detection
+ Collection            (Weighted)          & Clustering
+      │                   │                    │
+      └───────────────────┴────────────────────┘
+                          │
+                          ▼
+                 Force Layout Generation
+                          │
+                          ▼
+                  Export Static Graph Files
 ```
 
 ---
 
-## Recommendation Engine
+# Project Philosophy
 
-The graph will **not rely solely on TMDB recommendations**.
+CineMap is **not** intended to become another movie database like TMDB or IMDb.
 
-Instead, CineMap will compute its own similarity score between movies.
+Instead, it aims to create a persistent, explorable movie universe where relationships between movies are computed by CineMap itself.
 
-Possible features include:
+Movie search serves only as a navigation tool to locate an existing movie inside the graph.
 
-- Genres
-- Keywords
-- Directors
-- Cast
-- Runtime
-- Rating
-- Release Year
-- Popularity
-- Language
-- Production Companies
+The graph should already exist before the user performs a search.
 
-Each feature will contribute to a weighted similarity score.
+---
+
+# Graph Pipeline
+
+## 1. Metadata Collection
+
+Collect movie metadata from TMDB.
+
+Examples:
+
+* Genres
+* Keywords
+* Cast
+* Directors
+* Runtime
+* Ratings
+* Release Year
+* Popularity
+* Production Companies
+* Languages
+* Posters
+
+Initially this may include only popular movies before expanding to a much larger collection.
+
+---
+
+## 2. Similarity Engine
+
+Compute CineMap's own weighted similarity score.
+
+Possible features:
+
+* Genres
+* Keywords
+* Directors
+* Cast
+* Runtime
+* Rating
+* Release Year
+* Popularity
+* Language
+* Production Companies
 
 Example:
 
+```
 Batman
-│
-├── Joker (93%)
-├── Se7en (89%)
-├── Prisoners (87%)
-├── Zodiac (84%)
+   │
+   ├── Joker (93%)
+   ├── Se7en (89%)
+   ├── Prisoners (87%)
+   └── Zodiac (84%)
+```
 
 These similarity scores determine:
 
-- Graph edges
-- Node distance
-- Cluster formation
-- Recommendations
+* Graph edges
+* Edge weights
+* Node distance
+* Community formation
+
+TMDB recommendations are only used during early development and will eventually be replaced.
 
 ---
 
-## Long-Term Goal
+## 3. Graph Generation
+
+Generate a weighted movie graph.
+
+Movies become nodes.
+
+Similarity becomes weighted edges.
+
+The graph is generated offline instead of during every search.
+
+---
+
+## 4. Community Detection
+
+Automatically identify related movie communities.
+
+Possible algorithms include:
+
+* Louvain
+* Leiden
+* Infomap
+
+Examples:
+
+* Action
+* Crime
+* Sci-Fi
+* Animation
+* Horror
+
+These communities improve navigation and layout.
+
+---
+
+## 5. Layout Generation
+
+Generate node positions offline using a force-directed layout.
+
+Current planned direction:
+
+* D3 Force Simulation
+
+The resulting coordinates are stored so the frontend only renders the graph rather than recalculating layouts.
+
+---
+
+# Frontend Responsibilities
+
+The frontend focuses on visualization and interaction.
+
+Features include:
+
+* Smooth zoom and pan
+* Search navigation
+* Movie sidebar
+* Cluster exploration
+* Neighbor highlighting
+* Camera fly-to animation
+* Poster nodes at high zoom levels
+
+Search should move the camera to an existing node instead of generating a new graph.
+
+---
+
+# Long-Term Vision
+
+The goal is to build a persistent movie universe inspired by projects such as MAL Map.
 
 Users should be able to:
 
-- Search a movie
-- Open its graph
-- Explore nearby recommendations visually
-- Click any node to continue exploring
-- View movie information in a sidebar without leaving the graph
-
-The experience should resemble exploring a knowledge graph rather than browsing a traditional movie database.
+* Explore thousands of interconnected movies.
+* Discover related movies naturally through graph navigation.
+* Zoom from large communities into individual movie nodes.
+* Click any movie to continue exploration.
+* View detailed information in a sidebar without leaving the graph.
+* Experience the graph as an interactive map rather than a search-results page.
 
 ---
 
-## Future Improvements
+# Future Improvements
 
-### Backend
+## Backend
 
-- PostgreSQL
-- Redis Cache
-- Background similarity computation
-- Recommendation API
+* PostgreSQL
+* Redis caching
+* Background metadata updates
+* Offline graph generation
+* Incremental graph rebuilding
 
-### Frontend
+## Graph Engine
 
-- Cytoscape.js visualization
-- Smooth graph animations
-- Movie sidebar
-- Advanced filters
-- Search history
+* Advanced weighted similarity
+* Community detection
+* Offline force-layout computation
+* Cluster labeling
+* Graph versioning
 
-### Recommendation Engine
+## Frontend
 
-- Custom weighted similarity algorithm
-- Graph clustering
-- Community detection
-- Personalized recommendations
+* React
+* D3 Force Simulation
+* SVG initially (Pixi/WebGL if needed later)
+* shadcn/ui
+* GSAP transitions
+* Dynamic level-of-detail rendering
 
-### User Features
+## User Features
 
-- Authentication
-- Favorites
-- Watchlists
-- Ratings
-- Graph sharing
+* Authentication
+* Favorites
+* Watchlists
+* Ratings
+* Graph sharing
+* Personalized recommendations
