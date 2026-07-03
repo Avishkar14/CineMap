@@ -1,35 +1,19 @@
 import {useState, useEffect} from "react";
 import MovieCard from "./components/MovieCard";
 import "./App.css";
+import type { MovieGraph } from "./types/Graph";
+import type { Movie , MovieDetails } from "./types/Movie";
+import GraphView from "./components/GraphView";
 
 function App() {
 
-    interface Movie{
-        id:number;
-        title:string;
-        poster_path:string;
-    }
-
-    interface Genre{
-        id:number;
-        name:string;
-    }
-
-    interface MovieDetails{
-        id:number;
-        title:string;
-        poster_path:string;
-        overview:string;
-        runtime:number;
-        vote_average:number;
-        genres:Genre[];
-    }
     const [movies,setMovies] = useState<Movie[]>([]);
     const [query, setQuery] = useState("Batman");
     const [loadingSearch, setLoadingSearch] = useState(false);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [error, setError] = useState("");
     const [selectedMovie,setSelectedMovie] = useState<MovieDetails | null>(null);
+    const [graph, setGraph] = useState<MovieGraph | null>(null);
 
     function searchMovies() {
         setLoadingSearch(true);
@@ -74,6 +58,22 @@ function App() {
             });
     }
 
+    function fetchGraph(movieId: number) {
+        fetch(`http://localhost:8080/api/graph/${movieId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Graph request failed");
+                }
+                return response.json();
+            })
+            .then(data => {
+                setGraph(data);
+            })
+            .catch(() => {
+                console.log("Could not load graph");
+            });
+    }
+
     useEffect(() => {
         searchMovies();
     }, []);
@@ -115,14 +115,19 @@ function App() {
         )}
 
         <div className="main-layout">
+            <div>
             <div className="movie-grid">
                 {movies.map((movie) => (
                     <MovieCard
                         key={movie.id}
                         movie={movie}
-                        onClick={() => fetchMovieDetails(movie.id)}
+                        onClick={() => {fetchMovieDetails(movie.id);
+                                        fetchGraph(movie.id);
+                        }}
                     />
                 ))}
+            </div>
+            <GraphView graph={graph} />
             </div>
 
             {selectedMovie && (
@@ -140,7 +145,7 @@ function App() {
 
                     <p>
                         <strong>Genres:</strong>{" "}
-                        {selectedMovie.genres.map((g) => g.name).join(", ")}
+                        {selectedMovie.genres?.map((g) => g.name).join(", ")}
                     </p>
 
                     <p>{selectedMovie.overview}</p>
