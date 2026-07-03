@@ -1,9 +1,22 @@
 import "./MovieCard.css";
 
-function MovieCard({ movie }) {
-    return (
-        <div className="movie-card">
+type MovieCardProps = {
+    movie: {
+        id: number;
+        title: string;
+        poster_path: string;
+    };
+    onClick: () => void;
+};
 
+function MovieCard({ movie, onClick }: MovieCardProps) {
+    return (
+        <div
+            className="movie-card"
+            onClick={() => {
+                onClick();
+            }}
+        >
             <img
                 className="movie-poster"
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}

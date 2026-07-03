@@ -33,9 +33,34 @@
 }
 
 .movie-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, 220px);
-    justify-content: center;
-    gap: 25px;
+    flex: 2;
+}
+
+.movie-details {
+    width: 350px;
+    color: white;
+}
+
+.content{
+    display:flex;
+    gap:30px;
+    align-items:flex-start;
+}
+
+.details-poster{
     width:100%;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.main-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+body {
+    margin: 0;
+    background: #111;
+    color: white;
 }
