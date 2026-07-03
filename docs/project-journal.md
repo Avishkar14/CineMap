@@ -59,275 +59,300 @@ Complete project setup and connect frontend with backend.
 
 ---
 
-## Next Goal
+# 🚀 Updated Development Roadmap
 
-Issue #2
+## ✅ Phase 1 — Foundation (Completed)
 
-Implement movie search using TMDB API.
-## Day 2 - TMDB Integration
-
-### Completed
-
-- Created AppConfig class
-- Created RestTemplate Bean
-- Learned IoC Container and Beans
-- Learned Dependency Injection
-- Learned Constructor Injection
-- Created TMDBService
-- Injected API key using @Value
-- Created MovieController
-- Added `/api/search` endpoint
-- Connected backend with TMDB API
-- Successfully fetched live movie data
-- Debugged and fixed URL construction (`&query=`)
-
-### Concepts Learned
-
-- @Configuration
-- @Bean
-- IoC Container
-- Spring Beans
-- Dependency Injection
-- Constructor Injection
-- RestTemplate
-- @Value
-- @RequestParam
-- Controller vs Service
-- Spring Request Lifecycle
-
-### Challenges Faced
-
-- Search endpoint returned empty results.
-- Found that the generated URL was:
-  `...&queryBatman`
-- Fixed it to:
-  `...&query=Batman`
-
-### Result
-
-Successfully fetched live TMDB movie data from the backend.
-
-### Next Goals
-
-- DTO Mapping
-- JSON to Java Objects (Jackson)
-- Connect React to backend
-- Display movie cards
-## Day 2 - Issue #2 Completed (Movie Search)
-
-### Objective
-
-Complete end-to-end movie search functionality.
-
-### Work Completed
-
-#### Backend
-
-- Integrated TMDB Search API.
-- Created `SearchResponseDTO` and `MovieDTO`.
-- Converted JSON responses into Java objects using Jackson.
-- Returned DTOs from Spring Boot instead of raw JSON strings.
-- Fixed CORS issue to allow React requests.
-
-#### Frontend
-
-- Connected React with Spring Boot backend.
-- Displayed movie titles dynamically.
-- Added movie posters.
-- Added search input and Search button.
-- Added loading indicator.
-- Added error handling using `.catch()`.
-- Added "No movies found" message.
-- Moved movie display into a reusable `MovieCard` component.
-- Styled movie cards using CSS Grid.
-
-### Bugs Fixed
-
-- Incorrect TMDB URL (`queryBatman` instead of `query=Batman`).
-- React crash when backend returned an error.
-- Missing App.css import causing layout issues.
-- Poster loading issue for movies without posters.
-- CORS blocking frontend requests.
-
-### Concepts Learned
-
-Backend
-
-- RestTemplate
-- DTOs
-- Jackson
-- Serialization
-- Deserialization
-
-Frontend
-
-- Props
-- State Arrays
-- map()
-- Conditional Rendering
-- Component Separation
-
-### Project Status
-
-✅ Issue #2 Complete
-
-## Project Direction Update
-
-The project direction evolved after completing movie search.
-
-Rather than becoming another movie database like TMDB or IMDb, CineMap aims to provide an interactive movie discovery experience through graph visualization.
-
-Movie search serves only as the entry point into the graph.
-
-The long-term objective is to calculate similarity scores between movies using multiple attributes instead of relying on TMDB recommendations.
-
-Potential similarity factors include:
-
-- Genre
-- Keywords
-- Director
-- Cast
-- Runtime
-- Rating
-- Release Year
-- Popularity
-
-These weighted similarities will determine graph connections and distances.
-
-Users will be able to:
-
-- Explore connected movies visually.
-- Discover recommendations naturally.
-- Zoom and pan across movie clusters.
-- Expand recommendations by selecting any movie.
-- View detailed movie information inside a sidebar without leaving the graph.
+* [x] Spring Boot backend setup
+* [x] React + TypeScript frontend setup
+* [x] TMDB API integration
+* [x] Movie search
+* [x] Movie details endpoint (`GET /api/movie/{id}`)
+* [x] Movie details panel
+* [x] Frontend ↔ Backend integration
+* [x] Project structure established
 
 ---
 
-## Next Goals
+# 🗺️ Phase 2 — Graph Prototype
 
-### Phase 3 — Graph Foundation
+### ✅ Issue #5 — Graph Data Model
 
-#### Issue #3 — Movie Details API
+Create the backend graph model.
 
-Create endpoint:
+DTOs:
 
-```text
-GET /api/movie/{id}
-```
+* Node
+* Edge
+* Graph
 
-Return:
+Create:
 
-- Title
-- Poster
-- Overview
-- Genres
-- Runtime
-- Release Date
-- Rating
+* `GraphService`
 
 Purpose:
 
-Provide detailed movie information when a graph node is selected.
+Define a clean graph architecture independent of the visualization library.
 
 ---
 
-#### Issue #4 — Movie Details Sidebar
+### Issue #6 — Initial Graph Visualization
 
-Display movie information inside a sidebar instead of navigating to another page.
+Research and evaluate graph rendering approaches.
 
-The graph should remain visible while the sidebar updates dynamically.
+Current direction:
+
+* React
+* D3 Force Simulation
+* SVG (initially)
+
+Goals:
+
+* Render movie nodes
+* Render edges
+* Zoom
+* Pan
+* Click events
+
+Purpose:
+
+Learn how the visualization layer communicates with the graph model.
 
 ---
 
-#### Issue #5 — Integrate Cytoscape.js
+### Issue #7 — Temporary Recommendation Graph
 
-Create the first interactive graph.
+Temporarily use TMDB recommendations.
 
-Initially display a single movie node.
-
-Learn:
-
-- Nodes
-- Edges
-- Layouts
-- Zoom
-- Pan
-- Click Events
-
----
-
-#### Issue #6 — Generate Graph from Recommendations
-
-Use TMDB recommendations temporarily.
-
-```
 Selected Movie
-        ↓
+
+↓
+
 TMDB Recommendations
-        ↓
+
+↓
+
 Graph Nodes
-        ↓
+
+↓
+
 Graph Edges
-```
 
-This provides the first working graph visualization.
+Purpose:
 
----
+Build the first interactive graph while the CineMap recommendation engine is still under development.
 
-### Phase 4 — CineMap Recommendation Engine
-
-#### Issue #7 — Design Similarity Algorithm
-
-Research and define weighted similarity using:
-
-- Genres
-- Keywords
-- Directors
-- Cast
-- Runtime
-- Rating
-- Popularity
-- Release Year
+This layer will later be replaced.
 
 ---
 
-#### Issue #8 — Build Recommendation Engine
+# 🌌 Phase 3 — CineMap Data Pipeline
 
-Replace TMDB recommendations with CineMap-generated similarity scores.
+Move from live API responses toward an offline-generated movie universe.
+
+### Issue #8 — Metadata Collection
+
+Download movie metadata from TMDB.
+
+Potential metadata:
+
+* Genres
+* Keywords
+* Cast
+* Directors
+* Runtime
+* Ratings
+* Release Year
+* Popularity
+* Posters
+
+Store locally for preprocessing.
+
+---
+
+### Issue #9 — Similarity Engine
+
+Design CineMap's weighted similarity algorithm.
+
+Potential factors:
+
+* Genres
+* Keywords
+* Director
+* Cast
+* Runtime
+* Rating
+* Popularity
+* Release Year
+
+Output:
+
+Movie A
+
+↓
+
+Movie B
+
+↓
+
+Similarity Score
 
 Example:
 
-```text
-Batman
-   ↓
-Joker        92%
-   ↓
-Se7en        88%
-   ↓
-Prisoners    86%
-   ↓
-Zodiac       84%
-```
+Batman → Joker (92%)
+
+Batman → Se7en (88%)
+
+Batman → Zodiac (84%)
 
 ---
 
-#### Issue #9 — Graph Clustering
+### Issue #10 — Graph Builder
 
-Automatically cluster movies based on similarity.
+Generate a weighted graph from similarity scores.
 
-Nearby movies should appear more closely related than distant ones.
+Movies become nodes.
+
+Similarity becomes weighted edges.
+
+This replaces TMDB recommendations.
 
 ---
 
-#### Issue #10 — Interactive Graph Exploration
+# 🧠 Phase 4 — Offline Graph Processing
 
-Allow users to:
+Create the persistent CineMap universe.
 
-- Click any node.
-- Smoothly center the graph.
-- Highlight neighboring movies.
-- Expand recommendations.
-- Update sidebar information dynamically.
+### Issue #11 — Community Detection
 
-No page reloads should occur.
+Cluster related movies.
+
+Possible algorithms:
+
+* Louvain
+* Infomap
+* Leiden
+
+Purpose:
+
+Create natural movie communities.
+
+Examples:
+
+Action
+
+Crime
+
+Sci-Fi
+
+Anime
+
+Classic Films
+
+---
+
+### Issue #12 — Layout Generation
+
+Generate graph coordinates offline using force simulation.
+
+Current direction:
+
+D3 Force Simulation
+
+Compute:
+
+* x
+* y
+* Cluster positions
+
+Store coordinates.
+
+The browser should load a precomputed layout instead of calculating positions every time.
+
+---
+
+### Issue #13 — Graph Export
+
+Export processed data.
+
+Examples:
+
+* metadata.json
+* graph.json
+* clusters.json
+* positions.json
+
+Frontend loads these files directly.
+
+---
+
+# 🎬 Phase 5 — CineMap Explorer
+
+Turn the graph into a navigable movie universe.
+
+### Issue #14 — Interactive Navigation
+
+Features:
+
+* Smooth zoom
+* Smooth pan
+* Camera fly-to animation
+* Node highlighting
+* Neighbor expansion
+* Cluster exploration
+
+Search should navigate to an existing movie instead of creating a new graph.
+
+---
+
+### Issue #15 — Sidebar
+
+Persistent sidebar.
+
+Displays:
+
+* Poster
+* Overview
+* Genres
+* Runtime
+* Rating
+* Similar movies
+
+Graph remains visible while browsing.
+
+No page reloads.
+
+---
+
+### Issue #16 — Visual Polish
+
+Improve exploration experience.
+
+Potential additions:
+
+* Cluster labels
+* Poster nodes at high zoom
+* Dynamic level of detail
+* Smooth animations
+* Search suggestions
+* Filtering
+* Better UI (shadcn/ui)
+* GSAP transitions where appropriate
+
+---
+
+# 🎯 Long-Term Vision
+
+CineMap is **not** intended to become another movie database like TMDB or IMDb.
+
+Movie search serves only as the entry point into a persistent, explorable movie universe.
+
+The long-term goal is to build an interactive graph where:
+
+* Search navigates to an existing movie.
+* Similarity is computed by CineMap.
+* Communities emerge naturally through clustering.
+* Layout is generated offline.
+* Users freely explore movies through connected relationships.
+
+The experience should resemble navigating a living map rather than browsing search results.
