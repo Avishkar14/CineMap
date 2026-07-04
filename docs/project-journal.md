@@ -356,3 +356,212 @@ The long-term goal is to build an interactive graph where:
 * Users freely explore movies through connected relationships.
 
 The experience should resemble navigating a living map rather than browsing search results.
+
+---
+
+# Day 3
+
+## Objective
+
+Extend CineMap from a movie search application into the foundation of a graph-based recommendation system.
+
+---
+
+## Completed
+
+### Backend
+
+- Created a graph architecture using DTOs.
+- Added `MovieNodeDTO`.
+- Added `MovieEdgeDTO`.
+- Added `MovieGraphDTO`.
+- Created `GraphService`.
+- Created `GraphController`.
+- Implemented:
+
+```
+GET /api/graph/{movieId}
+```
+
+- Refactored `TMDBService`.
+- Renamed `getMovieDetails()` to `getMovie()` to better represent its purpose.
+- Integrated TMDB Recommendations API.
+- Built the first graph response containing:
+  - Selected movie as the center node.
+  - Recommended movies as surrounding nodes.
+  - Edges connecting the selected movie to recommendations.
+
+---
+
+### Frontend
+
+- Added TypeScript interfaces for graph models.
+- Created:
+
+```
+types/
+    Graph.ts
+    Movie.ts
+```
+
+- Moved interfaces out of `App.tsx`.
+- Added graph state.
+
+```tsx
+const [graph, setGraph] = useState<MovieGraph | null>(null);
+```
+
+- Implemented `fetchGraph()`.
+
+- Clicking a movie now performs two independent backend requests:
+
+```
+Movie Click
+
+├── GET /api/movie/{id}
+
+└── GET /api/graph/{id}
+```
+
+- Created the first `GraphView` component.
+- Added the first graph visualization prototype using SVG.
+- Rendered movie nodes inside the graph.
+- Connected backend graph data with frontend visualization.
+
+---
+
+## Concepts Learned
+
+### Spring Boot
+
+- DTO architecture
+- Graph modeling
+- GraphService
+- Controller → Service separation
+- Returning complex nested DTOs
+- Consuming multiple TMDB endpoints
+- Building graph responses from API data
+
+### React
+
+- TypeScript interface organization
+- Component separation
+- Graph state management
+- Multiple asynchronous API requests
+- Props between components
+- SVG fundamentals
+- Rendering graph data
+
+### Graph Theory
+
+Introduced the basic graph data model.
+
+```
+Movie
+
+↓
+
+Node
+```
+
+```
+Relationship
+
+↓
+
+Edge
+```
+
+```
+Graph
+
+↓
+
+Nodes + Edges
+```
+
+Every graph visualization is ultimately built from these three concepts.
+
+---
+
+## Challenges
+
+- Encountered a static method error while calling `TMDBService`.
+  - Learned the difference between static methods and Spring-managed beans.
+
+- Recommendation endpoint required creating a new DTO because its response structure differs from the movie search endpoint.
+
+- Fixed CORS configuration for the new `GraphController`.
+
+- Refactored the frontend so graph rendering was separated from the search interface.
+
+- Learned that graph visualization and graph generation are independent problems.
+
+---
+
+## Current State
+
+CineMap can now:
+
+- Search movies.
+- Display movie details.
+- Request graph data from the backend.
+- Build a graph consisting of:
+  - One selected movie.
+  - Twenty TMDB recommendations.
+  - Edges connecting them.
+- Render the first SVG-based graph prototype.
+
+Although the graph currently uses TMDB recommendations directly, the architecture has been designed so this data source can later be replaced by CineMap's own recommendation engine without changing the frontend.
+
+---
+
+## Key Design Decisions
+
+During development, the long-term direction of CineMap became much clearer.
+
+Instead of generating a new graph every time a movie is searched, the project will evolve toward a persistent movie universe.
+
+The future architecture will include:
+
+```
+Offline Metadata Collection
+
+↓
+
+Similarity Engine
+
+↓
+
+Weighted Graph
+
+↓
+
+Community Detection
+
+↓
+
+Force Layout Generation
+
+↓
+
+Precomputed Graph
+
+↓
+
+Interactive Movie Explorer
+```
+
+Movie search will simply move the camera to an existing node inside this graph rather than generating recommendations on demand.
+
+This architecture is inspired by MALMap while being redesigned specifically for movies and TV series.
+
+---
+
+## Next Objectives
+
+- Improve the SVG graph prototype.
+- Add interactive node selection.
+- Connect graph node clicks with the movie sidebar.
+- Introduce D3 Force Simulation to replace the temporary circular layout.
+- Continue preparing the frontend architecture for the future offline-generated CineMap universe.

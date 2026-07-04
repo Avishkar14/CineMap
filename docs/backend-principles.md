@@ -533,3 +533,369 @@ The architecture grows feature-by-feature instead of being over-engineered from 
 Good backend development is not about writing more code.
 
 It is about placing the right code in the right layer.
+
+---
+
+# 12. Graph-Oriented API Design
+
+As CineMap evolved, the backend began exposing graph data instead of only individual movies.
+
+Rather than returning a list of recommendations directly, the backend now returns a graph structure.
+
+```
+MovieGraphDTO
+
+├── Nodes
+└── Edges
+```
+
+This keeps the frontend independent of how graph data is generated.
+
+Later, the graph may come from:
+
+- TMDB recommendations
+- CineMap similarity engine
+- Database
+- Offline graph files
+
+The frontend will still consume the same API.
+
+---
+
+# 13. Backend Builds the Graph
+
+React should never calculate movie relationships.
+
+Wrong
+
+```
+React
+
+↓
+
+Fetch recommendations
+
+↓
+
+Create nodes
+
+↓
+
+Create edges
+```
+
+Correct
+
+```
+React
+
+↓
+
+GET /api/graph/{id}
+
+↓
+
+Spring Boot
+
+↓
+
+MovieGraphDTO
+
+↓
+
+React renders it
+```
+
+### Benefits
+
+- Graph generation stays centralized.
+- Business logic remains inside the backend.
+- Frontend only focuses on visualization.
+- Easier to replace TMDB later.
+
+---
+
+# 14. DTOs Represent Different Purposes
+
+Different endpoints should return different DTOs.
+
+Examples
+
+```
+MovieDTO
+```
+
+Used for search results.
+
+Contains only lightweight information.
+
+```
+MovieDetailsDTO
+```
+
+Used for the movie sidebar.
+
+Contains detailed information such as:
+
+- Overview
+- Runtime
+- Genres
+- Rating
+- Poster
+
+```
+MovieNodeDTO
+```
+
+Used inside graph responses.
+
+Contains only the information needed to draw graph nodes.
+
+```
+MovieEdgeDTO
+```
+
+Represents a relationship between two movies.
+
+```
+source
+
+↓
+
+target
+
+↓
+
+weight
+```
+
+```
+MovieGraphDTO
+```
+
+Represents the complete graph.
+
+```
+Nodes
+
++
+
+Edges
+```
+
+Each DTO exists for one specific purpose.
+
+---
+
+# 15. Service Layer Builds Business Objects
+
+Controllers should remain thin.
+
+Example
+
+```
+GraphController
+
+↓
+
+GraphService
+
+↓
+
+TMDBService
+
+↓
+
+TMDB API
+```
+
+Responsibilities
+
+**GraphController**
+
+- Receives HTTP request.
+- Returns graph response.
+
+**GraphService**
+
+- Creates nodes.
+- Creates edges.
+- Builds the graph.
+
+**TMDBService**
+
+- Communicates with TMDB.
+
+Each class has a single responsibility.
+
+---
+
+# 16. Temporary vs Permanent Architecture
+
+The current graph uses TMDB recommendations.
+
+```
+Movie
+
+↓
+
+TMDB Recommendations
+
+↓
+
+Nodes
+
+↓
+
+Edges
+```
+
+This is only a temporary solution.
+
+Eventually it will become:
+
+```
+Movie
+
+↓
+
+Similarity Engine
+
+↓
+
+Weighted Graph
+
+↓
+
+Community Detection
+
+↓
+
+Stored Graph
+
+↓
+
+Frontend
+```
+
+Because the frontend already consumes `MovieGraphDTO`, replacing TMDB will require little or no frontend changes.
+
+---
+
+# 17. API Design for Future Scalability
+
+Instead of exposing TMDB responses directly, CineMap exposes its own API.
+
+Example
+
+```
+GET /api/search
+```
+
+```
+GET /api/movie/{id}
+```
+
+```
+GET /api/graph/{id}
+```
+
+This abstraction allows the backend implementation to change without affecting the frontend.
+
+Future improvements may include:
+
+- Recommendation engine
+- Database
+- Graph cache
+- Offline graph pipeline
+
+The frontend will continue calling the same endpoints.
+
+---
+
+# 18. Build for Tomorrow, Not Just Today
+
+While implementing the graph prototype, several design decisions were made with future scalability in mind.
+
+Examples
+
+- Separate GraphService from TMDBService.
+- Separate graph DTOs from movie DTOs.
+- Build graph endpoints instead of returning raw recommendation lists.
+- Keep graph generation independent from visualization libraries.
+
+This allows CineMap to evolve from a simple recommendation application into a persistent movie universe without major architectural changes.
+
+---
+
+# Backend Architecture (Current)
+
+```
+React Frontend
+
+↓
+
+MovieController
+GraphController
+
+↓
+
+TMDBService
+GraphService
+
+↓
+
+TMDB API
+```
+
+---
+
+# Planned Architecture
+
+```
+React
+
+↓
+
+MovieController
+GraphController
+
+↓
+
+RecommendationService
+
+↓
+
+Similarity Engine
+
+↓
+
+Graph Builder
+
+↓
+
+Community Detection
+
+↓
+
+Stored Graph
+
+↓
+
+Frontend Visualization
+```
+
+---
+
+# Key Lesson
+
+A good backend is not only about making features work.
+
+It should:
+
+- Separate responsibilities clearly.
+- Hide implementation details.
+- Return only the required data.
+- Remain flexible enough to support future features without major redesign.
+
+The architecture created during the graph prototype stage lays the foundation for CineMap's long-term vision of a persistent, explorable movie graph.
