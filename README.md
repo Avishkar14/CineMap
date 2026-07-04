@@ -194,52 +194,36 @@ CineMap
 
 ### ✅ Issue #5 — Graph Data Model
 
-Create the backend graph model.
+
+Created the backend graph architecture.
 
 DTOs:
 
-* Node
-* Edge
-* Graph
+- `MovieNodeDTO`
+- `MovieEdgeDTO`
+- `MovieGraphDTO`
 
-Create:
+Services:
 
-* `GraphService`
+- `GraphService`
 
-Purpose:
+Controller:
 
-Define a clean graph architecture independent of the visualization library.
-
----
-
-### Issue #6 — Initial Graph Visualization
-
-Research and evaluate graph rendering approaches.
-
-Current direction:
-
-* React
-* D3 Force Simulation
-* SVG (initially)
-
-Goals:
-
-* Render movie nodes
-* Render edges
-* Zoom
-* Pan
-* Click events
+- `GraphController`
 
 Purpose:
 
-Learn how the visualization layer communicates with the graph model.
+Provide a visualization-independent graph model that can support any frontend graph library.
 
 ---
 
-### Issue #7 — Temporary Recommendation Graph
+### ✅ Issue #6 — Temporary Recommendation Graph
 
-Temporarily use TMDB recommendations.
+Implemented the first graph endpoint using TMDB recommendations.
 
+Pipeline:
+
+```
 Selected Movie
 
 ↓
@@ -248,17 +232,58 @@ TMDB Recommendations
 
 ↓
 
-Graph Nodes
+MovieGraphDTO
 
 ↓
 
-Graph Edges
+React Frontend
+```
+
+Current implementation:
+
+- Selected movie becomes the center node.
+- TMDB recommendations become neighboring nodes.
+- Edges connect the center movie to every recommendation.
+- Graph data is returned from:
+
+```
+GET /api/graph/{movieId}
+```
 
 Purpose:
 
-Build the first interactive graph while the CineMap recommendation engine is still under development.
+Build the complete backend graph pipeline before implementing CineMap's own recommendation engine.
 
-This layer will later be replaced.
+---
+
+### 🚧 Issue #7 — Initial Graph Visualization (In Progress)
+
+Current direction:
+
+- React
+- SVG (prototype)
+- D3 Force Simulation (next)
+
+Current progress:
+
+- Backend graph successfully renders in the frontend.
+- GraphView component created.
+- GraphNode component created.
+- Nodes displayed using SVG.
+- Temporary circular layout implemented.
+
+Next improvements:
+
+- Draw graph edges.
+- Replace circular layout with D3 force simulation.
+- Node labels.
+- Zoom.
+- Pan.
+- Click interactions.
+
+Purpose:
+
+Separate graph rendering from graph generation while learning visualization fundamentals.
 
 ---
 

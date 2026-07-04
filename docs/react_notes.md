@@ -620,3 +620,262 @@ React concepts learned during this feature
 - CSS Separation
 - Search using State
 - Rendering Dynamic Lists
+
+## Moving Interfaces into Separate Files
+
+Initially, all interfaces were written inside `App.tsx`.
+
+Example:
+
+```tsx
+interface Movie {
+    id: number;
+    title: string;
+    poster_path: string;
+}
+```
+
+As the project grew, keeping every interface inside one file became difficult to manage.
+
+Instead, interfaces were moved into dedicated files.
+
+Example:
+
+```
+src/types/
+    Movie.ts
+    Graph.ts
+```
+
+Now App imports only the types it needs.
+
+```tsx
+import type { Movie, MovieDetails } from "./types/Movie";
+import type { MovieGraph } from "./types/Graph";
+```
+
+Benefits:
+
+- Cleaner files
+- Better project organization
+- Reusable interfaces
+- Easier maintenance
+
+---
+
+## Graph Data in React
+
+A new state was introduced for the graph.
+
+```tsx
+const [graph, setGraph] = useState<MovieGraph | null>(null);
+```
+
+Initially no graph exists.
+
+```
+graph = null
+```
+
+After selecting a movie,
+
+```
+Backend
+
+↓
+
+Graph JSON
+
+↓
+
+setGraph()
+
+↓
+
+React re-renders
+```
+
+The UI now automatically updates whenever the graph changes.
+
+---
+
+## Fetching Multiple Resources
+
+Clicking a movie now triggers two backend requests.
+
+```tsx
+onClick={() => {
+    fetchMovieDetails(movie.id);
+    fetchGraph(movie.id);
+}}
+```
+
+The requests are independent.
+
+```
+Movie Click
+
+├── Movie Details API
+
+└── Graph API
+```
+
+This allows both the sidebar and graph to update simultaneously.
+
+---
+
+## GraphView Component
+
+Instead of rendering graph-related UI inside `App.tsx`, a dedicated component was created.
+
+```
+GraphView.tsx
+```
+
+Responsibilities:
+
+- Receive graph data
+- Display graph visualization
+- Handle future graph interactions
+
+App remains responsible only for fetching data and managing state.
+
+---
+
+## Props Between Components
+
+Graph data is passed from App to GraphView.
+
+```tsx
+<GraphView graph={graph} />
+```
+
+GraphView receives it through props.
+
+```tsx
+type GraphViewProps = {
+    graph: MovieGraph | null;
+};
+```
+
+This keeps components independent and reusable.
+
+---
+
+## Conditional Rendering for Graph
+
+Initially there is no graph.
+
+```tsx
+if (!graph) {
+    return (
+        <div>
+            Select a movie...
+        </div>
+    );
+}
+```
+
+After a movie is selected,
+
+React automatically renders the graph.
+
+This is another example of Conditional Rendering.
+
+---
+
+## SVG Introduction
+
+The graph visualization begins using SVG.
+
+SVG (Scalable Vector Graphics) allows React to draw graphics directly in the browser.
+
+Unlike images, SVG elements remain sharp at every zoom level.
+
+Examples of SVG elements include:
+
+- `<svg>`
+- `<circle>`
+- `<line>`
+- `<text>`
+
+SVG is well suited for graph visualizations because every node and edge can be represented as an individual element.
+
+---
+
+## First Graph Layout
+
+The initial graph uses a simple circular layout.
+
+```
+             Movie 1
+
+      Movie 2      Movie 3
+
+
+Movie 6     Center Movie     Movie 4
+
+
+      Movie 7      Movie 5
+```
+
+The selected movie is placed at the center.
+
+Recommended movies are positioned around it.
+
+This layout is temporary and helps verify that the graph pipeline works correctly before introducing force simulations.
+
+---
+
+## Separation of Responsibilities
+
+Current frontend architecture
+
+```
+App.tsx
+
+↓
+
+Fetch Backend Data
+
+↓
+
+Manage State
+
+↓
+
+Pass Props
+
+↓
+
+MovieCard
+GraphView
+```
+
+Each component now has a single responsibility.
+
+| Component | Responsibility |
+|-----------|----------------|
+| App | State Management & API Calls |
+| MovieCard | Display one movie |
+| GraphView | Display graph |
+| GraphNode | Display one graph node (future) |
+
+This follows React's principle of building applications from small reusable components.
+
+---
+
+## Issue #3 Progress
+
+React concepts learned during this feature
+
+- TypeScript Interfaces
+- Interface Organization
+- Graph State
+- Multiple API Requests
+- Component Communication
+- GraphView Component
+- Props
+- SVG Basics
+- Graph Rendering Foundation
+- Separation of Concerns

@@ -1277,3 +1277,286 @@ The frontend should communicate only with **our API**, not directly depend on TM
 
 This allows the backend to change its internal implementation without affecting the frontend.
 
+
+---
+
+## Building a Graph API
+
+Until now, every endpoint returned either a movie or a list of movies.
+
+Example:
+
+```java
+GET /api/search
+
+↓
+
+SearchResponseDTO
+```
+
+or
+
+```java
+GET /api/movie/{id}
+
+↓
+
+MovieDetailsDTO
+```
+
+For graph visualization, we needed an entirely different response structure.
+
+Instead of returning movies directly, the backend now returns a graph.
+
+```text
+MovieGraphDTO
+
+├── nodes
+└── edges
+```
+
+---
+
+## Why create Graph DTOs?
+
+TMDB does not return data in a graph format.
+
+Our frontend expects something like:
+
+```json
+{
+    "nodes":[...],
+    "edges":[...]
+}
+```
+
+Therefore we created our own DTOs:
+
+- `MovieGraphDTO`
+- `MovieNodeDTO`
+- `MovieEdgeDTO`
+
+This allows the backend to control exactly what the frontend receives.
+
+---
+
+## GraphService
+
+Instead of placing graph-building logic inside the controller, we created a dedicated service.
+
+Responsibilities of `GraphService`:
+
+- Fetch the selected movie.
+- Fetch recommended movies.
+- Convert movies into graph nodes.
+- Create graph edges.
+- Return a `MovieGraphDTO`.
+
+This keeps the controller small and focused only on handling HTTP requests.
+
+---
+
+## Separation of Responsibilities
+
+Each service now has a clear responsibility.
+
+### TMDBService
+
+Responsible for communicating with TMDB.
+
+Example:
+
+```java
+Search Movies
+
+Get Movie Details
+
+Get Recommendations
+```
+
+### GraphService
+
+Responsible for constructing CineMap graph data.
+
+Example:
+
+```text
+Movie
+
+↓
+
+Recommendations
+
+↓
+
+Nodes
+
+↓
+
+Edges
+
+↓
+
+MovieGraphDTO
+```
+
+This follows the **Separation of Concerns** principle.
+
+---
+
+## Recommendation Endpoint
+
+TMDB provides a recommendation endpoint.
+
+```
+GET /movie/{movie_id}/recommendations
+```
+
+Example:
+
+```
+Batman Begins
+
+↓
+
+The Dark Knight
+
+Batman
+
+The Dark Knight Rises
+
+...
+```
+
+Currently these recommendations are used only to build the initial graph.
+
+---
+
+## Graph Construction Process
+
+When the frontend requests
+
+```
+GET /api/graph/{movieId}
+```
+
+the backend performs the following steps.
+
+```text
+Fetch Movie
+
+↓
+
+Fetch Recommendations
+
+↓
+
+Create MovieNodeDTO list
+
+↓
+
+Create MovieEdgeDTO list
+
+↓
+
+Return MovieGraphDTO
+```
+
+---
+
+## Current Graph Structure
+
+The current graph is a simple **star graph**.
+
+```text
+          Movie A
+             │
+Movie B ─ Batman ─ Movie C
+             │
+          Movie D
+```
+
+The selected movie becomes the center node.
+
+Every recommended movie connects directly to the center movie.
+
+Recommendation nodes are not connected to one another.
+
+---
+
+## Temporary Recommendation Strategy
+
+Currently, CineMap **does not calculate similarity**.
+
+The graph uses TMDB's recommendation endpoint as a temporary data source.
+
+Edge weights are also temporary.
+
+```java
+edge.setWeight(1);
+```
+
+This does **not** represent actual similarity.
+
+Later, CineMap will compute its own weighted similarity scores.
+
+Example:
+
+```text
+Batman Begins
+
+↓
+
+The Dark Knight
+
+Similarity = 91.2%
+```
+
+The graph will eventually become independent of TMDB recommendations.
+
+---
+
+## Why build our own Graph API?
+
+The frontend should not know how the backend obtains recommendations.
+
+Today:
+
+```text
+TMDB Recommendations
+
+↓
+
+Graph API
+```
+
+Future:
+
+```text
+Movie Metadata
+
+↓
+
+Similarity Engine
+
+↓
+
+Graph API
+```
+
+# Concepts Learned Today
+
+- Graph API
+- Graph DTO
+- Nested DTOs
+- GraphService
+- Recommendation Endpoint
+- Separation of Concerns
+- Custom API Response Design
+- Graph Construction
+- Movie Nodes
+- Movie Edges
+
+The frontend will continue calling the same endpoint even after the recommendation engine is completely replaced.
+
+This makes the architecture flexible and easier to maintain.
